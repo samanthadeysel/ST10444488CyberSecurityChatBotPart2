@@ -13,8 +13,11 @@ namespace CybersecurityChatBot_ST10444488
 {
     class Program
     {
+        //dictionary for user preferences and recall
         static Dictionary<string, string> userMemory = new Dictionary<string, string>();
+        //list for conversation history
         static List<string> conversationHistory = new List<string>();
+        //random instance for random responses
         static Random random = new Random();
 
         static void Main()
@@ -239,10 +242,21 @@ namespace CybersecurityChatBot_ST10444488
         // Saves conversation history to a text file for logging user interactions
         static void SaveConversationHistory()
         {
-            // Define the file path where conversation history will be saved
             string filePath = "conversation_log.txt";
-            File.WriteAllLines(filePath, conversationHistory);
-            Console.WriteLine("Conversation history saved.");
+
+            try
+            {
+                // Append conversation history instead of overwriting existing log
+                File.AppendAllLines(filePath, conversationHistory);
+
+                Console.ForegroundColor = ConsoleColor.Gray;
+                DisplayTypingEffect($"Conversation history updated.");
+            }
+            catch (Exception ex)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                DisplayTypingEffect($"Error saving conversation history: {ex.Message}");
+            }
         }
 
         static void DisplayTypingEffect(string message)
