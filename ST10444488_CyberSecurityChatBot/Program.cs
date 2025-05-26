@@ -216,18 +216,8 @@ namespace CybersecurityChatBot_ST10444488
         static void SaveConversationHistory()
         {
             string filePath = "conversation_log.txt";
-
-            try
-            {
-                File.WriteAllLines(filePath, conversationHistory);
-                Console.ForegroundColor = ConsoleColor.Gray;
-                DisplayTypingEffect($"Conversation history saved successfully to {filePath}.");
-            }
-            catch (Exception ex)
-            {
-                Console.ForegroundColor = ConsoleColor.Red;
-                DisplayTypingEffect($"Error saving conversation history: {ex.Message}");
-            }
+            File.WriteAllLines(filePath, conversationHistory);
+            Console.WriteLine("Conversation history saved.");
         }
 
         static void DisplayTypingEffect(string message)
