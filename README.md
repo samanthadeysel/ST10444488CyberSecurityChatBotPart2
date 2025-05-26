@@ -4,6 +4,7 @@ The Purpose of the Chatbot 🔎:
 
 The purpose of the chatbot is to give information to the users about cybersecurity and provide them tips to improve their cybersecurity.
 
+
 The Features of the Chatbot ⚙️:
 - voice greeting
 - typing effect
@@ -11,6 +12,7 @@ The Features of the Chatbot ⚙️:
 - try catch
 - methods to play greeting and respond
 - saving information and conversations
+
 
 What the Chatbot Does ✅:
 
