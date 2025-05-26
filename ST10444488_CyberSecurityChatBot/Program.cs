@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Media;
@@ -20,6 +22,7 @@ namespace CybersecurityChatBot_ST10444488
             //play audio greeting
             PlayGreetingAudio("cyberbotvoice.wav");
 
+            //ASCII and Borders
             Console.Title = "Cybersecurity Awareness chatbot";
             Console.ForegroundColor = ConsoleColor.DarkCyan;
             Console.WriteLine(new string('=', Console.WindowWidth));// Top border
@@ -40,22 +43,28 @@ namespace CybersecurityChatBot_ST10444488
             Console.ForegroundColor = ConsoleColor.Gray;
             DisplayTypingEffect("\nWelcome to your Cybersecurity Awareness Chatbot!");
             DisplayTypingEffect("What is your Name?\n ");
+
+            // Get user name and store it for personalized responses
             Console.ForegroundColor = ConsoleColor.Cyan;
             String userName = Console.ReadLine();
             userMemory["name"] = userName;
             Console.ForegroundColor = ConsoleColor.Gray;
             conversationHistory.Add($"{DateTime.Now}: User Name: {userName}");
 
+            // Initial chatbot greeting message
             DisplayTypingEffect($"\nHello {userName}! I am here to help you stay safe online!");
             DisplayTypingEffect("You can ask about password, 2 factor authentication, updates, phishing, virtual private networks, clicking, or type 'exit' to quit. \n");
 
+            // Main chatbot loop to handle user interaction
             while (true)
             {
+                //if user responds correctly
                 Console.ForegroundColor = ConsoleColor.Cyan;
                 DisplayTypingEffect($"\n{userName}: ");
                 string userInput = Console.ReadLine()?.ToLower().Trim();
                 conversationHistory.Add($"{DateTime.Now}: {userName}: {userInput}");
 
+                //Handling empty input case
                 if (string.IsNullOrEmpty(userInput))
                 {
                     Console.ForegroundColor = ConsoleColor.Gray;
@@ -63,6 +72,7 @@ namespace CybersecurityChatBot_ST10444488
                     continue;
                 }
 
+                // Handle exit command by saving history and closing the window
                 if (userInput == "exit")
                 {
                     Console.ForegroundColor = ConsoleColor.Gray;
@@ -74,11 +84,12 @@ namespace CybersecurityChatBot_ST10444488
                     Thread.Sleep(2000);
                     System.Diagnostics.Process.GetCurrentProcess().Kill();
                 }
-
+                // Process the user query to provide responses
                 HandleUserQuery(userInput, userName);
             }
         }
 
+        // Plays a greeting sound if the file exists
         static void PlayGreetingAudio(string filepath)
         {
             try
@@ -103,9 +114,10 @@ namespace CybersecurityChatBot_ST10444488
                 DisplayTypingEffect($"Error playing audio: {ex.Message}");
             }
         }
-        //dictionary for information
+        // Handles user queries by checking keywords and providing relevant response
         static void HandleUserQuery(string input, string userName)
         {
+            // Dictionary of predefined responses for different cybersecurity topics
             Dictionary<string, string> responses = new Dictionary<string, string>
             {
                 {"help", "You can ask about: 'Passwords', '2 Factor Authentication', 'Updates', 'Phishing', 'Virtual Private Networks', 'Clicking'." },
@@ -121,6 +133,7 @@ namespace CybersecurityChatBot_ST10444488
 
             };
 
+            // Search for matching keywords in user input
             Dictionary<string, List<string>> keywordGroups = new Dictionary<string, List<string>>()
             {
                 {"password", new List<string> {"strong password", "secure password", "password help", "passcode", "pass word", "pass code", "login security", "password safety"}},
@@ -134,6 +147,7 @@ namespace CybersecurityChatBot_ST10444488
 
             conversationHistory.Add($"{userName}: {input}");
 
+            // Search for matching keywords in user input
             foreach (var entry in responses)
             {
                 if (input.Contains(entry.Key))
@@ -145,6 +159,7 @@ namespace CybersecurityChatBot_ST10444488
                 }
             }
 
+            // If no exact keyword match was found, search for synonyms within keyword groups
             if (!foundResponse)
             {
                 foreach (var group in keywordGroups)
@@ -163,6 +178,7 @@ namespace CybersecurityChatBot_ST10444488
                 }
             }
 
+            // Provide cybersecurity tips if no exact match is found
             if (!foundResponse)
             {
                 Console.ForegroundColor = ConsoleColor.Gray;
@@ -173,19 +189,22 @@ namespace CybersecurityChatBot_ST10444488
 
                 if (reply == "yes")
                 {
+                    // If user does want tips
                     Console.ForegroundColor = ConsoleColor.Gray;
                     securityTips(userName);
                 }
                 else
                 {
+                    // If user does not want tips
                     Console.ForegroundColor = ConsoleColor.Gray;
                     DisplayTypingEffect("\nChatbot: No worries! Let me know if you have any other cybersecurity questions.");
                 }
             }
         }
-
+        // Provides cybersecurity tips based on user expertise level
         static void securityTips(string userName)
         {
+            // Dictionary storing cybersecurity tips categorized by skill level
             Dictionary<string, List<string>> securityTips = new Dictionary<string, List<string>>
             {
                 {"beginner", new List<string>{ "Use strong passwords!", "Keep your devices locked.", "Never share login credentials." }},
@@ -194,27 +213,33 @@ namespace CybersecurityChatBot_ST10444488
             };
 
             Console.ForegroundColor = ConsoleColor.Gray;
+            // Ask the user for their cybersecurity knowledge level
             DisplayTypingEffect("\nChatbot: What level of cybersecurity knowledge do you have? (beginner/intermediate/expert)");
             Console.ForegroundColor = ConsoleColor.Cyan;
             Console.Write($"\n{userName}: \n");
             string level = Console.ReadLine()?.ToLower().Trim();
             Console.ForegroundColor = ConsoleColor.Gray;
 
+            // Check if the entered level exists in the dictionary
             if (securityTips.ContainsKey(level))
             {
+                // Randomly select a tip from the chosen category
                 string randomTip = securityTips[level][random.Next(securityTips[level].Count)];
                 Console.ForegroundColor = ConsoleColor.Gray;
                 DisplayTypingEffect($"\nChatbot: {randomTip}");
             }
             else
             {
+                // Handle invalid inputs and prompt the user to enter a valid category
                 Console.ForegroundColor = ConsoleColor.Gray;
                 DisplayTypingEffect("\nChatbot: Please enter 'beginner', 'intermediate', or 'expert'.");
             }
         }
 
+        // Saves conversation history to a text file for logging user interactions
         static void SaveConversationHistory()
         {
+            // Define the file path where conversation history will be saved
             string filePath = "conversation_log.txt";
             File.WriteAllLines(filePath, conversationHistory);
             Console.WriteLine("Conversation history saved.");
@@ -222,11 +247,13 @@ namespace CybersecurityChatBot_ST10444488
 
         static void DisplayTypingEffect(string message)
         {
+            // Loop through each character in the message and print it with a delay
             foreach (char c in message)
             {
                 Console.Write(c);
                 Thread.Sleep(20);  // Simulates typing effect
             }
+            // Move to the next line after printing the full message
             Console.WriteLine();
         }
     }
